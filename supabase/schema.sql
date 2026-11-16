@@ -2,15 +2,18 @@ create extension if not exists "pgcrypto";
 
 create table if not exists public.waitlist_entries (
   id uuid primary key default gen_random_uuid(),
-  full_name text not null,
-  state_city text not null,
+  first_name text not null check (length(trim(first_name)) > 0),
+  last_name text not null check (length(trim(last_name)) > 0),
+  city text not null check (length(trim(city)) > 0),
+  state text not null check (length(trim(state)) > 0),
   email text not null,
+  whatsapp_phone text not null check (length(trim(whatsapp_phone)) > 0),
   category text not null check (category in ('Driver', 'Rider')),
   created_at timestamptz not null default now()
 );
 
--- create unique index if not exists waitlist_entries_email_idx
---   on public.waitlist_entries (lower(email));
+create unique index if not exists waitlist_entries_email_idx
+  on public.waitlist_entries (lower(email));
 
 create index if not exists waitlist_entries_category_created_at_idx
   on public.waitlist_entries (category, created_at desc);
@@ -48,12 +51,18 @@ create policy "Allow public waitlist registrations"
   for insert
   to anon, authenticated
   with check (
-    full_name is not null
-    and length(trim(full_name)) > 0
-    and state_city is not null
-    and length(trim(state_city)) > 0
+    first_name is not null
+    and length(trim(first_name)) > 0
+    and last_name is not null
+    and length(trim(last_name)) > 0
+    and city is not null
+    and length(trim(city)) > 0
+    and state is not null
+    and length(trim(state)) > 0
     and email is not null
     and length(trim(email)) > 0
+    and whatsapp_phone is not null
+    and length(trim(whatsapp_phone)) > 0
     and category in ('Driver', 'Rider')
   );
 

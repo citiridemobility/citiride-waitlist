@@ -1,28 +1,47 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, KeyboardEvent, useMemo, useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { StatusModal } from "@/components/StatusModal";
+import {
+  filterNigeriaCities,
+  filterNigeriaStates,
+} from "@/lib/nigeria-locations";
 import { submitWaitlistEntry } from "@/lib/waitlist";
-import type { WaitlistCategory } from "@/types/waitlist";
+import type { WaitlistCategory, WaitlistEntryPayload } from "@/types/waitlist";
 
 type WaitlistFormProps = {
   category: WaitlistCategory;
 };
 
-const emptyForm = {
+type WaitlistFormValues = Omit<WaitlistEntryPayload, "category">;
+
+const emptyForm: WaitlistFormValues = {
+  firstName: "",
+  lastName: "",
+  city: "",
+  state: "",
   email: "",
-  fullName: "",
-  stateCity: "",
+  whatsappPhone: "",
 };
 
 export function WaitlistForm({ category }: WaitlistFormProps) {
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<WaitlistFormValues>(emptyForm);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const [showStateSuggestions, setShowStateSuggestions] = useState(false);
   const [status, setStatus] = useState<
     | { message: string; type: "error" | "success" }
     | { message: string; type: "idle" | "loading" }
   >({ message: "", type: "idle" });
 
+  const citySuggestions = useMemo(
+    () => filterNigeriaCities(form.city, form.state),
+    [form.city, form.state],
+  );
+  const stateSuggestions = useMemo(
+    () => filterNigeriaStates(form.state),
+    [form.state],
+  );
   const isLoading = status.type === "loading";
   const isFormComplete = Object.values(form).every(
     (value) => value.trim().length > 0,
@@ -30,8 +49,32 @@ export function WaitlistForm({ category }: WaitlistFormProps) {
   const isSubmitDisabled = isLoading || !isFormComplete;
   const isModalOpen = status.type !== "idle";
   const modalStatus = status.type === "idle" ? "loading" : status.type;
-  const modalTitleId = `${category.toLowerCase()}-waitlist-status-title`;
-  const modalDescriptionId = `${category.toLowerCase()}-waitlist-status-description`;
+  const formId = category.toLowerCase();
+  const modalTitleId = `${formId}-waitlist-status-title`;
+  const modalDescriptionId = `${formId}-waitlist-status-description`;
+  const cityListId = `${formId}-city-suggestions`;
+  const stateListId = `${formId}-state-suggestions`;
+
+  function updateField(field: keyof WaitlistFormValues, value: string) {
+    setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  function handleSuggestionKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Escape") {
+      setShowCitySuggestions(false);
+      setShowStateSuggestions(false);
+    }
+  }
+
+  function selectCity(city: string, state: string) {
+    setForm((current) => ({ ...current, city, state }));
+    setShowCitySuggestions(false);
+  }
+
+  function selectState(state: string) {
+    setForm((current) => ({ ...current, state }));
+    setShowStateSuggestions(false);
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,14 +89,11 @@ export function WaitlistForm({ category }: WaitlistFormProps) {
     });
 
     try {
-      const response = await submitWaitlistEntry({
-        category,
-        email: form.email,
-        fullName: form.fullName,
-        stateCity: form.stateCity,
-      });
+      const response = await submitWaitlistEntry({ category, ...form });
 
       setForm(emptyForm);
+      setShowCitySuggestions(false);
+      setShowStateSuggestions(false);
       setStatus({
         message:
           response.message ??
@@ -84,47 +124,144 @@ export function WaitlistForm({ category }: WaitlistFormProps) {
       <form className="waitlist-form" onSubmit={handleSubmit}>
         <div className="form-row">
           <input
-            autoComplete="name"
-            name="fullName"
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                fullName: event.target.value,
-              }))
-            }
-            placeholder="Full Name"
+            aria-label="First name"
+            autoComplete="given-name"
+            maxLength={60}
+            name="firstName"
+            onChange={(event) => updateField("firstName", event.target.value)}
+            placeholder="First Name"
             required
             type="text"
-            value={form.fullName}
+            value={form.firstName}
           />
           <input
-            autoComplete="address-level2"
-            name="stateCity"
-            onChange={(event) =>
-              setForm((current) => ({
-                ...current,
-                stateCity: event.target.value,
-              }))
-            }
-            placeholder="State / City"
+            aria-label="Last name"
+            autoComplete="family-name"
+            maxLength={60}
+            name="lastName"
+            onChange={(event) => updateField("lastName", event.target.value)}
+            placeholder="Last Name"
             required
             type="text"
-            value={form.stateCity}
+            value={form.lastName}
           />
         </div>
+
+        <div className="form-row">
+          <div className="waitlist-location-field">
+            <input
+              aria-autocomplete="list"
+              aria-controls={cityListId}
+              aria-expanded={showCitySuggestions && citySuggestions.length > 0}
+              aria-label="City"
+              autoComplete="address-level2"
+              maxLength={80}
+              name="city"
+              onBlur={() => window.setTimeout(() => setShowCitySuggestions(false), 120)}
+              onChange={(event) => {
+                updateField("city", event.target.value);
+                setShowCitySuggestions(true);
+              }}
+              onFocus={() => setShowCitySuggestions(true)}
+              onKeyDown={handleSuggestionKeyDown}
+              placeholder="City"
+              required
+              role="combobox"
+              type="text"
+              value={form.city}
+            />
+            {showCitySuggestions && citySuggestions.length > 0 ? (
+              <div
+                aria-label="City suggestions"
+                className="waitlist-suggestions"
+                id={cityListId}
+                role="listbox"
+              >
+                {citySuggestions.map((suggestion) => (
+                  <button
+                    className="waitlist-suggestion"
+                    key={`${suggestion.city}-${suggestion.state}`}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => selectCity(suggestion.city, suggestion.state)}
+                    role="option"
+                    type="button"
+                  >
+                    <span>{suggestion.city}</span>
+                    <small>{suggestion.state}</small>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="waitlist-location-field">
+            <input
+              aria-autocomplete="list"
+              aria-controls={stateListId}
+              aria-expanded={showStateSuggestions && stateSuggestions.length > 0}
+              aria-label="State"
+              autoComplete="address-level1"
+              maxLength={80}
+              name="state"
+              onBlur={() => window.setTimeout(() => setShowStateSuggestions(false), 120)}
+              onChange={(event) => {
+                updateField("state", event.target.value);
+                setShowStateSuggestions(true);
+              }}
+              onFocus={() => setShowStateSuggestions(true)}
+              onKeyDown={handleSuggestionKeyDown}
+              placeholder="State"
+              required
+              role="combobox"
+              type="text"
+              value={form.state}
+            />
+            {showStateSuggestions && stateSuggestions.length > 0 ? (
+              <div
+                aria-label="State suggestions"
+                className="waitlist-suggestions"
+                id={stateListId}
+                role="listbox"
+              >
+                {stateSuggestions.map((state) => (
+                  <button
+                    className="waitlist-suggestion"
+                    key={state}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => selectState(state)}
+                    role="option"
+                    type="button"
+                  >
+                    <span>{state}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </div>
+
         <input
+          aria-label="Email address"
           autoComplete="email"
+          maxLength={254}
           name="email"
-          onChange={(event) =>
-            setForm((current) => ({
-              ...current,
-              email: event.target.value,
-            }))
-          }
+          onChange={(event) => updateField("email", event.target.value)}
           placeholder="Email Address"
           required
           type="email"
           value={form.email}
+        />
+        <input
+          aria-label="WhatsApp phone number"
+          autoComplete="tel"
+          inputMode="tel"
+          maxLength={24}
+          name="whatsappPhone"
+          onChange={(event) => updateField("whatsappPhone", event.target.value)}
+          placeholder="WhatsApp Phone Number"
+          required
+          type="tel"
+          value={form.whatsappPhone}
         />
         <button
           data-loading={isLoading ? "true" : undefined}

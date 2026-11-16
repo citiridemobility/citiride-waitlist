@@ -82,9 +82,12 @@ export async function POST(request: Request) {
 
   const record = {
     category: parsed.data.category,
+    first_name: parsed.data.firstName,
+    last_name: parsed.data.lastName,
+    city: parsed.data.city,
+    state: parsed.data.state,
     email: parsed.data.email,
-    full_name: parsed.data.fullName,
-    state_city: parsed.data.stateCity,
+    whatsapp_phone: parsed.data.whatsappPhone,
   };
 
   const { data, error } = await supabase

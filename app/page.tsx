@@ -62,7 +62,12 @@ export default function HomePage() {
           <div className="hero-scrim" />
           <div className="hero-shell">
             <div className="hero-copy">
-              <h1>Your City. Your Ride. 0% Commission</h1>
+              <h1>
+                <strong>Your City. Your Ride.</strong>{" "}
+                <span className="hero-commission">
+                  <strong>0% Commission</strong>
+                </span>
+              </h1>
               <p>
                 CitiRide helps drivers keep more of every fare with
                 <span>0% commission on rides across Nigeria.</span>
@@ -75,14 +80,22 @@ export default function HomePage() {
                   {metrics.map((metric) => (
                     <div className="metric" key={metric.label}>
                       <span>{metric.label}</span>
-                      <strong><CountUpNumber end={metric.value} suffix={metric.suffix} /></strong>
+                      <strong>
+                        <CountUpNumber
+                          end={metric.value}
+                          suffix={metric.suffix}
+                        />
+                      </strong>
                     </div>
                   ))}
                 </div>
                 <div className="hero-service-strip">Ride Hailing Service</div>
               </div>
 
-              <div className="hero-card-row" aria-label="CitiRide video testimonials">
+              <div
+                className="hero-card-row"
+                aria-label="CitiRide video testimonials"
+              >
                 {heroTestimonials.map((testimonial) => (
                   <HeroTestimonialCard
                     avatar={testimonial.avatar}
@@ -166,7 +179,10 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="about-showcase__collage" aria-label="CitiRide city and ride scenes">
+              <div
+                className="about-showcase__collage"
+                aria-label="CitiRide city and ride scenes"
+              >
                 <AssetImage
                   alt="Busy Nigerian city transportation scene"
                   className="about-showcase__image about-showcase__image--city"
@@ -192,7 +208,10 @@ export default function HomePage() {
 
         <NewsletterReviewsCarousel />
 
-        <section className="waitlist-section waitlist-section--driver" id="driver-waitlist">
+        <section
+          className="waitlist-section waitlist-section--driver"
+          id="driver-waitlist"
+        >
           <div className="waitlist-wrap">
             <h2 className="waitlist-title">Driver Waitlist</h2>
             <div className="waitlist-grid">
@@ -202,9 +221,9 @@ export default function HomePage() {
                   <span>Keep More</span>
                 </h3>
                 <p>
-                  Join the CitiRide driver waitlist and keep 100% of every
-                  ride fare. We charge 0% commission on rides, so you can
-                  receive more ride requests and grow your earnings.
+                  Join the CitiRide driver waitlist and keep 100% of every ride
+                  fare. We charge 0% commission on rides, so you can receive
+                  more ride requests and grow your earnings.
                 </p>
                 <JoinWaitlistMenu
                   align="left"
@@ -232,7 +251,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="waitlist-section waitlist-section--rider" id="rider-waitlist">
+        <section
+          className="waitlist-section waitlist-section--rider"
+          id="rider-waitlist"
+        >
           <div className="waitlist-wrap">
             <h2 className="waitlist-title">Rider Waitlist</h2>
             <div className="waitlist-grid">
@@ -283,16 +305,34 @@ export default function HomePage() {
       <footer className="site-footer">
         <div className="footer-inner">
           <div className="footer-brand">
-            <a className="brand brand--footer" href="#home" aria-label="CitiRide home">
+            <a
+              className="brand brand--footer"
+              href="#home"
+              aria-label="CitiRide home"
+            >
               <img src="/assets/citiride-logo.svg" alt="CitiRide" />
             </a>
             <p>RIDE HAILING SERVICES</p>
             <div className="footer-links" aria-label="Social links">
-              <a href="https://tiktok.com/@citi_ride" rel="noreferrer" target="_blank" aria-label="CitiRide on TikTok">
+              <a
+                href="https://tiktok.com/@citi_ride"
+                rel="noreferrer"
+                target="_blank"
+                aria-label="CitiRide on TikTok"
+              >
                 <img src="/assets/titktok_icon.svg" alt="" aria-hidden="true" />
               </a>
-              <a href="https://www.instagram.com/citiridemobility" rel="noreferrer" target="_blank" aria-label="CitiRide on Instagram">
-                <img src="/assets/instagram_icon.svg" alt="" aria-hidden="true" />
+              <a
+                href="https://www.instagram.com/citiridemobility"
+                rel="noreferrer"
+                target="_blank"
+                aria-label="CitiRide on Instagram"
+              >
+                <img
+                  src="/assets/instagram_icon.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
               </a>
               {/* <a href="https://www.linkedin.com" rel="noreferrer" target="_blank" aria-label="CitiRide on LinkedIn">
                 <img src="/assets/linkedin_icon.svg" alt="" aria-hidden="true" />
@@ -307,12 +347,3 @@ export default function HomePage() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-

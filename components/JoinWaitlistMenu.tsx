@@ -74,7 +74,7 @@ export function JoinWaitlistMenu({
 
     window.setTimeout(() => {
       const firstField = section?.querySelector<HTMLInputElement>(
-        "input[name='fullName']",
+        "input[name='firstName']",
       );
       firstField?.focus();
     }, 500);
