@@ -15,6 +15,7 @@ type JoinWaitlistMenuProps = {
   align?: "left" | "right";
   className?: string;
   label?: string;
+  onNavigate?: () => void;
   variant?: "primary" | "compact" | "dark";
 };
 
@@ -33,6 +34,7 @@ export function JoinWaitlistMenu({
   align = "right",
   className,
   label = "Join The Waitlist",
+  onNavigate,
   variant = "primary",
 }: JoinWaitlistMenuProps) {
   const [open, setOpen] = useState(false);
@@ -66,6 +68,7 @@ export function JoinWaitlistMenu({
     const section = document.getElementById(sectionId);
 
     setOpen(false);
+    onNavigate?.();
     window.history.pushState(null, "", `#${sectionId}`);
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
 

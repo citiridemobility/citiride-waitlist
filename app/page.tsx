@@ -40,7 +40,7 @@ const heroTestimonials = [
   },
 ];
 
-const driverHighlights = ["Affordable", "Convenient", "Comfortable"];
+const driverHighlights = ["0% Commission", "More Earnings", "Flexible"];
 const riderHighlights = ["Profitable", "Reliable", "Flexible"];
 
 export default function HomePage() {
@@ -62,10 +62,10 @@ export default function HomePage() {
           <div className="hero-scrim" />
           <div className="hero-shell">
             <div className="hero-copy">
-              <h1>Your City. Your Ride</h1>
+              <h1>Your City. Your Ride. 0% Commission</h1>
               <p>
-                CitiRide is a technology-driven mobility platform transforming the way people
-                <span>access transportation across Nigeria.</span>
+                CitiRide helps drivers keep more of every fare with
+                <span>0% commission on rides across Nigeria.</span>
               </p>
             </div>
 
@@ -121,11 +121,9 @@ export default function HomePage() {
                 </p>
                 <p>
                   For drivers and transport operators, CitiRide provides
-                  powerful tools to manage bookings, receive ride requests, track
-                  earnings, and improve operational efficiency. By digitizing
-                  transportation services, we help operators increase their
-                  visibility, maximize vehicle utilization, and generate more
-                  income.
+                  powerful tools to manage bookings, receive ride requests,
+                  track earnings, and improve operational efficiency. Drivers
+                  keep more from every trip with 0% commission on rides.
                 </p>
               </div>
 
@@ -200,14 +198,13 @@ export default function HomePage() {
             <div className="waitlist-grid">
               <div className="waitlist-copy">
                 <h3>
-                  Your City.
-                  <span>Your Ride</span>
+                  Earn More.
+                  <span>Keep More</span>
                 </h3>
                 <p>
-                  Join our waitlist and start earning more with CitiRide. 
-                  Receive ride requests, grow your income, and connect with more passengers, 
-                  all from one platform.
-
+                  Join the CitiRide driver waitlist and keep 100% of every
+                  ride fare. We charge 0% commission on rides, so you can
+                  receive more ride requests and grow your earnings.
                 </p>
                 <JoinWaitlistMenu
                   align="left"

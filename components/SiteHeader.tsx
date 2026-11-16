@@ -110,6 +110,7 @@ export function SiteHeader() {
                 align="left"
                 className="mobile-waitlist"
                 label="Join The Waitlist"
+                onNavigate={() => setMobileOpen(false)}
               />
             </div>
           </aside>
